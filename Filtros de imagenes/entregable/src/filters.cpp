@@ -15,18 +15,23 @@ using namespace std;
 
 void blackWhite(ppm& img)
 {
-	vector<int> v{1};
-	short int r,g,b,aux;
-	for(line = 0; line < img.height; line++){
-		for(row = 0; row < img.width; row++){
+	// Declare the needed variables
+	unsigned short int r,g,b,aux;
+
+	// Read the image
+	for(y = 0; y < img.height; y++){
+
+		for(x = 0; x < img.width; x++){
 			
-			r = img.getPixel(line,row).r;
-			g = img.getPixel(line,row).g;
-			b = img.getPixel(line,row).b;
+			// Process every pixel values
+			r = img.getPixel(y,x).r;
+			g = img.getPixel(y,x).g;
+			b = img.getPixel(y,x).b;
 			
 			aux = (r+g+b)/3;
 			
-			img.setPixel(line,row,pixel(aux,aux,aux));
+			// Set the result
+			img.setPixel(y,x,pixel(aux,aux,aux));
 		}
 	}
 
@@ -35,18 +40,22 @@ void blackWhite(ppm& img)
 
 void merge(ppm& img1, ppm& img2, float alpha)
 {
-	vector<int> v{1};
-	short int r,g,b;
+	// Declare the needed variables and the new image
+	unsigned short int r,g,b;
+	ppm newImg(img.width, img.height);
 
-	for(line = 0; line < img.height; line++){
+	// Read the images
+	for(y = 0; y < img.height; y++){
 		
-		for(row = 0; row < img.width; row++){
+		for(x = 0; x < img.width; x++){
 			
-			r = ( img1.getPixel(line,row).r + img2.getPixel(line,row).r ) / 2;
-			g = ( img1.getPixel(line,row).g + img2.getPixel(line,row).g ) / 2;
-			b = ( img1.getPixel(line,row).b + img2.getPixel(line,row).b ) / 2;
+			// Process every pixel values
+			r = (img1.getPixel(y,x).r * alpha) + ( img2.getPixel(y,x).r * (1- alpha));
+			g = (img1.getPixel(y,x).g * alpha) + ( img2.getPixel(y,x).g * (1- alpha));
+			b = (img1.getPixel(y,x).b * alpha) + ( img2.getPixel(y,x).b * (1- alpha));
 			
-			newImg.setPixel(line,row,pixel(r,g,b));
+			// Set the result
+			newImg.setPixel(y,x,pixel(r,g,b));
 		}
 	}
 
@@ -55,20 +64,47 @@ void merge(ppm& img1, ppm& img2, float alpha)
 
 void brightness(ppm& img, float b, int start, int end)
 {
-	vector<int> v{1};
+	// Declare the needed variables and the new image
 	short int r,g,b;
 
-	for(line = 0; line < img.height; line++){
+	// Read the image
+	for(y = 0; y < img.height; y++){
 		
-		for(row = 0; row < img.width; row++){
+		for(x = 0; x < img.width; x++){
 			
-			r = img.getPixel(line,row).r + ( 255 * b );
-			g = img.getPixel(line,row).g + ( 255 * b ):
-			b = img.getPixel(line,row).b + ( 255 * b );
+			// Process every pixel values
+			r = img.getPixel(y,x).r + ( 255 * b );
+			g = img.getPixel(y,x).g + ( 255 * b ):
+			b = img.getPixel(y,x).b + ( 255 * b );
 			
 			ppm& pix = pixel(r,g,b);
 
-			img.setPixel(line,row,pix.truncate());
+			// Set the result
+			img.setPixel(y,x,pix.truncate());
+		}
+	}
+
+	return;
+}
+
+void contrast(ppm& img, float contrast)
+{
+	// Declare the needed variables and the new image
+	short int r,g,b,f;
+	f = 259*(contrast+255) / 255*(259-contrast);
+
+	// Read the image
+	for(y = 0; y < img.height; y++){
+
+		for(x = 0; x < img.width; x++){
+
+			// Process every pixel values
+			r = f * (img.getPixel(y,x).r - 128) + 128;
+			g = f * (img.getPixel(y,x).g - 128) + 128;
+			b = f * (img.getPixel(y,x).b - 128) + 128;
+
+			// Set the result
+			img.setPixel(y,x,pixel(r,g,b));
 		}
 	}
 
