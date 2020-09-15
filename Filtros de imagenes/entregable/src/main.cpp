@@ -35,6 +35,7 @@ int main(int argc , char* argv[]){
 	printf( "Duración del filtrado: %lf s\n", accum);
 	
 	cout << "Escribiendo imagen" << endl;
+	string out = "./imgs/salida";
 	img.write(out);  
 
 	cout << "Listo" << endl;

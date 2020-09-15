@@ -19,9 +19,9 @@ void blackWhite(ppm& img)
 	unsigned short int r,g,b,aux;
 
 	// Read the image
-	for(y = 0; y < img.height; y++){
+	for(int y = 0; y < img.height; y++){
 
-		for(x = 0; x < img.width; x++){
+		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
 			r = img.getPixel(y,x).r;
 			g = img.getPixel(y,x).g;
@@ -41,12 +41,12 @@ void merge(ppm& img1, ppm& img2, float alpha)
 {
 	// Declare the needed variables and the new image
 	unsigned short int r,g,b;
-	ppm newImg(img.width, img.height);
+	ppm newImg(img1.width, img1.height);
 
 	// Read the images
-	for(y = 0; y < img.height; y++){
+	for(int y = 0; y < img1.height; y++){
 		
-		for(x = 0; x < img.width; x++){
+		for(int x = 0; x < img1.width; x++){
 			// Process every pixel values
 			r = (img1.getPixel(y,x).r * alpha) + ( img2.getPixel(y,x).r * (1- alpha));
 			g = (img1.getPixel(y,x).g * alpha) + ( img2.getPixel(y,x).g * (1- alpha));
@@ -60,21 +60,21 @@ void merge(ppm& img1, ppm& img2, float alpha)
 	return;
 }
 
-void brightness(ppm& img, float b, int start, int end)
+void brightness(ppm& img, float br, int start, int end)
 {
 	// Declare the needed variables and the new image
 	short int r,g,b;
 
 	// Read the image
-	for(y = 0; y < img.height; y++){
+	for(int y = 0; y < img.height; y++){
 		
-		for(x = 0; x < img.width; x++){
+		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			r = img.getPixel(y,x).r + ( 255 * b );
-			g = img.getPixel(y,x).g + ( 255 * b ):
-			b = img.getPixel(y,x).b + ( 255 * b );
+			r = img.getPixel(y,x).r + ( 255 * br );
+			g = img.getPixel(y,x).g + ( 255 * br );
+			b = img.getPixel(y,x).b + ( 255 * br );
 			
-			ppm& pix = pixel(r,g,b);
+			pixel pix = pixel(r,g,b);
 
 			// Set the result
 			img.setPixel(y,x,pix.truncate());
@@ -87,14 +87,14 @@ void brightness(ppm& img, float b, int start, int end)
 void contrast(ppm& img, float contrast)
 {
 	// Declare the needed variables and the new image
-	short int r,g,b,f;
+	unsigned short int r,g,b,f;
 	f = 259*(contrast+255) / 255*(259-contrast);
 
 	// Read the image
 
-	for(y = 0; y < img.height; y++){
+	for(int y = 0; y < img.height; y++){
 
-		for(x = 0; x < img.width; x++){
+		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
 			r = f * (img.getPixel(y,x).r - 128) + 128;
 			g = f * (img.getPixel(y,x).g - 128) + 128;
@@ -108,11 +108,11 @@ void contrast(ppm& img, float contrast)
 	return;
 }
 
-ppm* convolution(ppm& img, short int ker[])
+ppm& convolution(ppm& img, short int ker[])
 {
 	// Declare the needed variables
-	ppm* newImg(img.height-2, img.width-2);
-	short int r,g,b=0;
+	ppm newImg(img.height-2, img.width-2);
+	unsigned short int r,g,b=0;
 
 	// Read the image
 	for(int y = 1; y < img.height - 1; y++){
@@ -140,10 +140,17 @@ ppm* convolution(ppm& img, short int ker[])
 
 void edgeDetection(ppm &img, ppm &img_target){
 	// Declare the kernel
-	int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
+	short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
 
 	// Set the result
-	img_target = convolution(img, ker);
+	ppm& aux = convolution(img,kernel);
+
+	for(int y = 1; y < img_target.height - 1; y++){
+
+		for(int x = 1; x < img_target.width - 1; x++){
+			img_target.setPixel(y,x,aux.getPixel(y,x));
+		}
+	}
 
 	return;
 }
