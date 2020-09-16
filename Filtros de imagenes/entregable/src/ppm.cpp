@@ -139,3 +139,4 @@ void ppm::write(const  string &fname) {
     }
     inp.close();
 }
+

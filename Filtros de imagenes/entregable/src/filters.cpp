@@ -157,12 +157,44 @@ void convolution(ppm& img,ppm& img_target, short int ker[])
 	return;
 }
 
-void edgeDetection(ppm &img, ppm &img_target){
-	// Declare the kernel
-	short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
+void sobel(ppm &img1, ppm &img2){
+	// Declare the needed vairables
+	unsigned short int r,g,b;
 
-	// Set the result
+	// Read the image
+	for(int y = 0; y < img1.height; y++){
+		for(int x = 0; x < img1.width; x++){
+			// Process each pixel value
+			r = sqrt(pow(img1.getPixel(y,x).r,2) + pow(img2.getPixel(y,x).r,2));
+			g = sqrt(pow(img1.getPixel(y,x).g,2) + pow(img2.getPixel(y,x).g,2));
+			b = sqrt(pow(img1.getPixel(y,x).b,2) + pow(img2.getPixel(y,x).b,2));
+
+			// Set the value
+			img1.setPixel(y,x,pixel(r,g,b));
+		}
+	}
+
+}
+
+void edgeDetection(ppm &img, ppm &img_target){
+	// B&W Filter
 	blackWhite(img);
+
+	// Horizontal convolution
+	short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
 	convolution(img,img_target,kernel);
+
+	// Vertical convolution
+	short int ker[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+	ppm img2(img_target.width,img_target.height);
+	convolution(img, img2, kernel);
+
+	// Sobel
+	sobel(img_target,img2);
+
 	return;
+}
+
+void frame(ppm& img, pixel color, int p){
+	for(int y = 0; y =< p; y++)
 }
