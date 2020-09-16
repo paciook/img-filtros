@@ -53,14 +53,14 @@ void merge(ppm& img1, ppm& img2, float alpha)
 			b = (img1.getPixel(y,x).b * alpha) + ( img2.getPixel(y,x).b * (1- alpha));
 			
 			// Set the result
-			newImg.setPixel(y,x,pixel(r,g,b));
+			img1.setPixel(y,x,pixel(r,g,b));
 		}
 	}
 
 	return;
 }
 
-void brightness(ppm& img, float br, int start, int end)
+void brightness(ppm& img, float br, int start = 0, int end = 0)
 {
 	// Declare the needed variables and the new image
 	short int r,g,b;
@@ -87,8 +87,8 @@ void brightness(ppm& img, float br, int start, int end)
 void contrast(ppm& img, float contrast)
 {
 	// Declare the needed variables and the new image
-	unsigned short int r,g,b,f;
-	f = 259*(contrast+255) / 255*(259-contrast);
+	unsigned short int r,g,b;
+	float f = (259*(contrast+255)) / (255*(259-contrast));
 
 	// Read the image
 
@@ -96,34 +96,33 @@ void contrast(ppm& img, float contrast)
 
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			r = f * (img.getPixel(y,x).r - 128) + 128;
-			g = f * (img.getPixel(y,x).g - 128) + 128;
-			b = f * (img.getPixel(y,x).b - 128) + 128;
+			r = (f * (img.getPixel(y,x).r - 128)) + 128;
+			g = (f * (img.getPixel(y,x).g - 128)) + 128;
+			b = (f * (img.getPixel(y,x).b - 128)) + 128;
 
 			// Set the result
-			img.setPixel(y,x,pixel(r,g,b));
+			img.setPixel(y,x,pixel(r,g,b).truncate());
 		}
 	}
 
 	return;
 }
 
-ppm& convolution(ppm& img, short int ker[])
+void convolution(ppm& img,ppm& img_target, short int ker[])
 {
 	// Declare the needed variables
-	ppm newImg(img.height-2, img.width-2);
-	unsigned short int r,g,b=0;
+	unsigned short int r,g,b;
 
 	// Read the image
 	for(int y = 1; y < img.height - 1; y++){
 
 		for(int x = 1; x < img.width - 1; x++){
-			r,g,b=0;
+			r=g=b=0;
 
 			// Run the kernel over the image
-			for(int ky = 0; ky < 4; ky++){
+			for(int ky = 0; ky < 3; ky++){
 
-				for(int kx = 0; kx < 4; kx++){
+				for(int kx = 0; kx < 3; kx++){
 					r += img.getPixel(y+ky-1,x+kx-1).r * ker[ky*3+kx];
 					g += img.getPixel(y+ky-1,x+kx-1).g * ker[ky*3+kx];
 					b += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
@@ -131,11 +130,11 @@ ppm& convolution(ppm& img, short int ker[])
 			}
 
 			// Set the result
-			newImg.setPixel(y,x,pixel(r,g,b));
+			img_target.setPixel(y-1,x-1,pixel(r,g,b).truncate());
 		}
 	}
 
-	return newImg;
+	return;
 }
 
 void edgeDetection(ppm &img, ppm &img_target){
@@ -143,14 +142,7 @@ void edgeDetection(ppm &img, ppm &img_target){
 	short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
 
 	// Set the result
-	ppm& aux = convolution(img,kernel);
-
-	for(int y = 1; y < img_target.height - 1; y++){
-
-		for(int x = 1; x < img_target.width - 1; x++){
-			img_target.setPixel(y,x,aux.getPixel(y,x));
-		}
-	}
-
+	blackWhite(img);
+	convolution(img,img_target,kernel);
 	return;
 }

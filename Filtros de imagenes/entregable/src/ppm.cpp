@@ -111,7 +111,7 @@ void ppm::read(const  string &fname) {
 //write the PPM image in fname
 
 void ppm::write(const  string &fname) {
-     ofstream inp(fname.c_str(),  ios::out |  ios::binary);
+    ofstream inp(fname.c_str(),  ios::out |  ios::binary);
     if (inp.is_open()) {
 
         inp << "P6\n";
