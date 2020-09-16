@@ -128,6 +128,26 @@ void convolution(ppm& img,ppm& img_target, short int ker[])
 					b += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
 				}
 			}
+			/*
+			// Horizontally
+			for(int ky = 0; ky < 3; ky++){
+
+				for(int kx = 0; kx < 3; kx++){
+					h[0] += img.getPixel(y+ky-1,x+kx-1).r * ker[ky*3+kx];
+					h[1] += img.getPixel(y+ky-1,x+kx-1).g * ker[ky*3+kx];
+					h[2] += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
+				}
+			}
+
+			// Vertically
+			for(int ky = 0; ky < 3; ky++){
+
+				for(int kx = 0; kx < 3; kx++){
+					v[0] += img.getPixel(y+ky-1,x+kx-1).r * ker[(3-kx)*ky];
+					v[1] += img.getPixel(y+ky-1,x+kx-1).g * ker[(3-kx)*ky];
+					v[2] += img.getPixel(y+ky-1,x+kx-1).b * ker[(3-kx)*ky];
+				}
+			}*/
 
 			// Set the result
 			img_target.setPixel(y-1,x-1,pixel(r,g,b).truncate());
