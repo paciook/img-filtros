@@ -18,55 +18,43 @@ int main(int argc , char* argv[]){
 		cout << "Uso: ./tp <filtro> <nthreads> <p1> <p2> <img1> <img2>" << endl;
 		return 0; 
 	}
-
-	cout << "Aplicando filtro" << endl;
-	// Start the clock
+	string filtro = argv[1];
+	int nThreads = atoi(argv[2]);
+	cout << "Abriendo imagen..." << endl;
+	ppm img(argv[3]);
+	bool singleThread = nThreads == 1;
+	cout << "Aplicando filtro..." << endl;
 	struct timespec start, stop;
-    double accum;
+	double accum;
 	clock_gettime(CLOCK_REALTIME, &start);
-	
-	if(string(argv[1])=="blackWhite")
-	{
-
-		string img1(argv[3]);
-		ppm img(img1);
-		blackWhite(img);
-
-	}else if(string(argv[1])=="frame"){	
-
-		int pix(argv[3]);
-		int val(argv[4]);
-		string img1(argv[5]);
-		ppm img(img1);
-		frame(img,pixel(pix, pix, pix), val);
-
-	}else if(string(argv[1])=="brightness"){
-
-		float br(argv[3]);
-		brightness(img,br,0,0);
-
-	}else if(string(argv[1])=="merge"){
-
-		string img1(argv[4]);
-		ppm img(img1);
-		string imgb(argv[5]);
-		ppm img2(imgb);
-		float p1=(float)(argv[3]);
-		merge(img, img2, p1);
-
-	}else if(string(argv[1])=="edgeDetection"){
-
-		string img1(argv[3]);
-		ppm img(img1);
-		ppm img_target(img.width-2, img.height-2);
-		edgeDetection(img,img_target);
-	}else{
-		cout << "Error";
-		return 1;
+/*
+	if (filtro == "b&w"){
+		if (singleThread)
+			blackWhite(img);
 	}
-	string img1(argv[3]);
-	ppm img(img1);
-
+	else if (filtro == "contrast"){
+		contrast(img, atof(argv[4]));
+	}
+	else if (filtro == "bright"){
+		brightness(img, atof(argv[4]), 0, 0);
+	}
+	else if (filtro == "merge"){
+		ppm img2(argv[4]);
+		float alpha = stof(argv[5]);
+		merge(img, img2, alpha);
+	}
+	else if (filtro == "frame"){
+		pixel p;
+		p.r = atoi(argv[4]);
+		p.g = atoi(argv[4]);
+		p.b = atoi(argv[4]);
+		frame(img, p, atoi(argv[5]));
+	}
+	else if (filtro == "edgeDetect"){
+			ppm img2((string)argv[6]);
+			edgeDetection(img, img2);
+	}
+*/
 	// Stop the clock
 	clock_gettime(CLOCK_REALTIME, &stop);
 	accum = ( stop.tv_sec - start.tv_sec )
