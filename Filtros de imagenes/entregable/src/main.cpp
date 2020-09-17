@@ -20,7 +20,6 @@ int main(int argc , char* argv[]){
 	}
 	string img1(argv[1]);
 	ppm img(img1);
-	ppm newImg(img.width-2, img.height-2);
 
 	cout << "Aplicando filtro" << endl;
 
@@ -28,7 +27,7 @@ int main(int argc , char* argv[]){
     double accum;
 	clock_gettime(CLOCK_REALTIME, &start);
 	
-	edgeDetection(img,newImg);
+	frame(img, pixel(100,100,100), 30);
 	
 	clock_gettime(CLOCK_REALTIME, &stop);
 	accum = ( stop.tv_sec - start.tv_sec )
@@ -38,7 +37,7 @@ int main(int argc , char* argv[]){
 	cout << "Escribiendo imagen" << endl;
 
 	string out = "out/salida.ppm";
-	newImg.write(out); 
+	img.write(out); 
 
 	cout << "Listo" << endl;
 

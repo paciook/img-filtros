@@ -196,5 +196,14 @@ void edgeDetection(ppm &img, ppm &img_target){
 }
 
 void frame(ppm& img, pixel color, int p){
-	for(int y = 0; y =< p; y++)
+	// Read the image
+	for(int y = 0; y < img.height; y++){
+
+		for(int x = 0; x < img.width; x++){
+			if( ((y < p+1)|(y>img.height-p-1)) | ((x<p+1)|(x>img.width-p-1)) )
+				// Set the result
+				img.setPixel(y,x,color);
+		}
+	}
+	return;
 }
