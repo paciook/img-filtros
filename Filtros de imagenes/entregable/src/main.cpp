@@ -19,10 +19,9 @@ int main(int argc , char* argv[]){
 		return 0; 
 	}
 	string filtro = argv[1];
-	int nThreads = atoi(argv[2]);
 	cout << "Abriendo imagen..." << endl;
-	ppm img(argv[3]);
-	bool singleThread = nThreads == 1;
+	ppm img(argv[1]);
+
 	cout << "Aplicando filtro..." << endl;
 	struct timespec start, stop;
 	double accum;
@@ -55,6 +54,8 @@ int main(int argc , char* argv[]){
 			edgeDetection(img, img2);
 	}
 */
+	dither(img);
+
 	// Stop the clock
 	clock_gettime(CLOCK_REALTIME, &stop);
 	accum = ( stop.tv_sec - start.tv_sec )

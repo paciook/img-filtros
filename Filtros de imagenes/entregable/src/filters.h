@@ -20,6 +20,7 @@ void frame(ppm& img, pixel color, int x);
 void boxBlur(ppm &img);
 void zoom(ppm &img, ppm &img_zoomed, int n);
 void edgeDetection(ppm &img, ppm &img_target);
+void dither(ppm& img);
 
 
 // MULTI-THREAD FILTERS

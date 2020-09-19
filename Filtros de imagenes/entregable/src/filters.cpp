@@ -208,7 +208,29 @@ void frame(ppm& img, pixel color, int p){
 	return;
 }
 
-void dither(ppm& img, ppm& img_target){
+void dither(ppm& img){
+	// Declare the needed variables
+	short int r,g,b;
+	// Read the image
+	//blackWhite(img);
+	for(int y = 0; y < img.height; y++){
 
-	return
+		for(int x = 0; x < img.width; x++){
+			// Process every pixel values
+			r = (round((float)img.getPixel(y,x).r*4 / 255)) * (255/4);
+			g = (round((float)img.getPixel(y,x).g*4 / 255)) * (255/4); 
+			b = (round((float)img.getPixel(y,x).b*4 / 255)) * (255/4);
+
+			// Set the result
+			img.setPixel(y,x,pixel(r,g,b));
+
+			int errR = img.getPixel(y,x).r - r;
+			int errG = img.getPixel(y,x).g - g;
+			int errB = img.getPixel(y,x).b - b;
+
+			// Sprad the error
+			img.getPixel(y,x+1);
+		}
+	}
+	return;
 }
