@@ -207,3 +207,8 @@ void frame(ppm& img, pixel color, int p){
 	}
 	return;
 }
+
+void dither(ppm& img, ppm& img_target){
+
+	return
+}
