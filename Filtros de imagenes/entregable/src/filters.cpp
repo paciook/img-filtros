@@ -128,26 +128,6 @@ void convolution(ppm& img,ppm& img_target, short int ker[])
 					b += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
 				}
 			}
-			/*
-			// Horizontally
-			for(int ky = 0; ky < 3; ky++){
-
-				for(int kx = 0; kx < 3; kx++){
-					h[0] += img.getPixel(y+ky-1,x+kx-1).r * ker[ky*3+kx];
-					h[1] += img.getPixel(y+ky-1,x+kx-1).g * ker[ky*3+kx];
-					h[2] += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
-				}
-			}
-
-			// Vertically
-			for(int ky = 0; ky < 3; ky++){
-
-				for(int kx = 0; kx < 3; kx++){
-					v[0] += img.getPixel(y+ky-1,x+kx-1).r * ker[(3-kx)*ky];
-					v[1] += img.getPixel(y+ky-1,x+kx-1).g * ker[(3-kx)*ky];
-					v[2] += img.getPixel(y+ky-1,x+kx-1).b * ker[(3-kx)*ky];
-				}
-			}*/
 
 			// Set the result
 			img_target.setPixel(y-1,x-1,pixel(r,g,b).truncate());
@@ -212,24 +192,43 @@ void dither(ppm& img){
 	// Declare the needed variables
 	short int r,g,b;
 	// Read the image
-	//blackWhite(img);
-	for(int y = 0; y < img.height; y++){
+	blackWhite(img);
+	for(int y = 0; y < img.height-1; y++){
 
-		for(int x = 0; x < img.width; x++){
+		for(int x = 1; x < img.width-1; x++){
 			// Process every pixel values
-			r = (round((float)img.getPixel(y,x).r*4 / 255)) * (255/4);
-			g = (round((float)img.getPixel(y,x).g*4 / 255)) * (255/4); 
-			b = (round((float)img.getPixel(y,x).b*4 / 255)) * (255/4);
+			r = (round((float)img.getPixel(y,x).r / 255)) * (255);
+			g = (round((float)img.getPixel(y,x).g / 255)) * (255); 
+			b = (round((float)img.getPixel(y,x).b / 255)) * (255);
+
+			// Calculate the error
+			float errR = img.getPixel(y,x).r - r;
+			float errG = img.getPixel(y,x).g - g;
+			float errB = img.getPixel(y,x).b - b;
 
 			// Set the result
 			img.setPixel(y,x,pixel(r,g,b));
 
-			int errR = img.getPixel(y,x).r - r;
-			int errG = img.getPixel(y,x).g - g;
-			int errB = img.getPixel(y,x).b - b;
+			// Spread the error
+			r = img.getPixel(y,x+1).r + errR*7/16.0;
+			g = img.getPixel(y,x+1).g + errG*7/16.0;
+			b = img.getPixel(y,x+1).b + errB*7/16.0;
+			img.setPixel(y,x+1,pixel(r,g,b).truncate());
 
-			// Sprad the error
-			img.getPixel(y,x+1);
+			r = img.getPixel(y+1,x-1).r + errR*3/16.0;
+			g = img.getPixel(y+1,x-1).g + errG*3/16.0;
+			b = img.getPixel(y+1,x-1).b + errB*3/16.0;
+			img.setPixel(y+1,x-1,pixel(r,g,b).truncate());
+
+			r = img.getPixel(y+1,x).r + errR*5/16.0;
+			g = img.getPixel(y+1,x).g + errG*5/16.0;
+			b = img.getPixel(y+1,x).b + errB*5/16.0;
+			img.setPixel(y+1,x,pixel(r,g,b).truncate());
+
+			r = img.getPixel(y+1,x+1).r + errR*1/16.0;
+			g = img.getPixel(y+1,x+1).g + errG*1/16.0;
+			b = img.getPixel(y+1,x+1).b + errB*1/16.0;
+			img.setPixel(y+1,x+1,pixel(r,g,b).truncate());
 		}
 	}
 	return;
