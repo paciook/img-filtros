@@ -190,45 +190,36 @@ void frame(ppm& img, pixel color, int p){
 
 void dither(ppm& img){
 	// Declare the needed variables
-	short int r,g,b;
-	// Read the image
+	short int c;
+	float err;
+	
+	// Greyscale the image
 	blackWhite(img);
+	// Read the image
+	
 	for(int y = 0; y < img.height-1; y++){
-
 		for(int x = 1; x < img.width-1; x++){
 			// Process every pixel values
-			r = (round((float)img.getPixel(y,x).r / 255)) * (255);
-			g = (round((float)img.getPixel(y,x).g / 255)) * (255); 
-			b = (round((float)img.getPixel(y,x).b / 255)) * (255);
+			c = (round((float)img.getPixel(y,x).r / 255)) * (255);
 
 			// Calculate the error
-			float errR = img.getPixel(y,x).r - r;
-			float errG = img.getPixel(y,x).g - g;
-			float errB = img.getPixel(y,x).b - b;
+			err = img.getPixel(y,x).r - c;
 
 			// Set the result
-			img.setPixel(y,x,pixel(r,g,b));
+			img.setPixel(y,x,pixel(c,c,c));
 
 			// Spread the error
-			r = img.getPixel(y,x+1).r + errR*7/16.0;
-			g = img.getPixel(y,x+1).g + errG*7/16.0;
-			b = img.getPixel(y,x+1).b + errB*7/16.0;
-			img.setPixel(y,x+1,pixel(r,g,b).truncate());
+			c = img.getPixel(y,x+1).r + err*7/16.0;
+			img.setPixel(y  ,x+1, pixel(c,c,c).truncate());
 
-			r = img.getPixel(y+1,x-1).r + errR*3/16.0;
-			g = img.getPixel(y+1,x-1).g + errG*3/16.0;
-			b = img.getPixel(y+1,x-1).b + errB*3/16.0;
-			img.setPixel(y+1,x-1,pixel(r,g,b).truncate());
+			c = img.getPixel(y+1,x-1).r + err*3/16.0;
+			img.setPixel(y+1,x-1, pixel(c,c,c).truncate());
 
-			r = img.getPixel(y+1,x).r + errR*5/16.0;
-			g = img.getPixel(y+1,x).g + errG*5/16.0;
-			b = img.getPixel(y+1,x).b + errB*5/16.0;
-			img.setPixel(y+1,x,pixel(r,g,b).truncate());
-
-			r = img.getPixel(y+1,x+1).r + errR*1/16.0;
-			g = img.getPixel(y+1,x+1).g + errG*1/16.0;
-			b = img.getPixel(y+1,x+1).b + errB*1/16.0;
-			img.setPixel(y+1,x+1,pixel(r,g,b).truncate());
+			c = img.getPixel(y+1,x).r + err*5/16.0;
+			img.setPixel(y+1,x  , pixel(c,c,c).truncate());
+			
+			c = img.getPixel(y+1,x+1).r + err*1/16.0;
+			img.setPixel(y+1,x+1,pixel(c,c,c).truncate());
 		}
 	}
 	return;
