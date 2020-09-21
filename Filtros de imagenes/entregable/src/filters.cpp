@@ -15,30 +15,28 @@ using namespace std;
 
 void blackWhite(ppm& img)
 {
-	// Declare the needed variables
-	unsigned short int r,g,b,aux;
+	/* Greyscales an image */
+
+	// Declare the needed variable
+	unsigned short int aux;
 
 	// Read the image
 	for(int y = 0; y < img.height; y++){
-
 		for(int x = 0; x < img.width; x++){
-			// Process every pixel values
-			r = img.getPixel(y,x).r;
-			g = img.getPixel(y,x).g;
-			b = img.getPixel(y,x).b;
-			
-			aux = (r+g+b)/3;
+			// Process every pixel value
+			aux = img.getPixel(y,x).cumsum() / 3;
 			
 			// Set the result
 			img.setPixel(y,x,pixel(aux,aux,aux));
 		}
 	}
-
 	return;
 }
 
 void merge(ppm& img1, ppm& img2, float alpha)
 {
+	/* Merges two images */
+
 	// Declare the needed variables and the new image
 	unsigned short int r,g,b;
 	ppm newImg(img1.width, img1.height);
@@ -56,73 +54,60 @@ void merge(ppm& img1, ppm& img2, float alpha)
 			img1.setPixel(y,x,pixel(r,g,b));
 		}
 	}
-
 	return;
 }
 
 void brightness(ppm& img, float br, int start = 0, int end = 0)
 {
-	// Declare the needed variables and the new image
-	short int r,g,b;
-
+	/* Changes the brightness of an image */
 	// Read the image
-	for(int y = 0; y < img.height; y++){
-		
+	for(int y = 0; y < img.height; y++){		
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			r = img.getPixel(y,x).r + ( 255 * br );
-			g = img.getPixel(y,x).g + ( 255 * br );
-			b = img.getPixel(y,x).b + ( 255 * br );
-			
-			pixel pix = pixel(r,g,b);
-
-			// Set the result
-			img.setPixel(y,x,pix.truncate());
+			img.getPixel(y,x).add(255 * br).truncate();
 		}
 	}
-
 	return;
 }
 
 void contrast(ppm& img, float contrast)
 {
-	// Declare the needed variables and the new image
-	unsigned short int r,g,b;
+	/* Changes the contrast of an image */
+
+	// Declare the needed variable
 	float f = (259*(contrast+255)) / (255*(259-contrast));
 
 	// Read the image
 
 	for(int y = 0; y < img.height; y++){
-
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			r = (f * (img.getPixel(y,x).r - 128)) + 128;
-			g = (f * (img.getPixel(y,x).g - 128)) + 128;
-			b = (f * (img.getPixel(y,x).b - 128)) + 128;
-
-			// Set the result
-			img.setPixel(y,x,pixel(r,g,b).truncate());
+			img.getPixel(y,x).sub(128);
+			img.getPixel(y,x).mult(f);
+			img.getPixel(y,x).add(128);
+			// I wonder if I could use this statement
+		//	img.getPixel(y,x).sub(128).mult(f).add(128);
 		}
 	}
-
 	return;
 }
 
 void convolution(ppm& img,ppm& img_target, short int ker[])
 {
+	/* Generic convolution algorithm */
+
 	// Declare the needed variables
-	unsigned short int r,g,b;
+	int r,g,b;
 
 	// Read the image
 	for(int y = 1; y < img.height - 1; y++){
-
 		for(int x = 1; x < img.width - 1; x++){
 			r=g=b=0;
 
 			// Run the kernel over the image
 			for(int ky = 0; ky < 3; ky++){
-
 				for(int kx = 0; kx < 3; kx++){
+
 					r += img.getPixel(y+ky-1,x+kx-1).r * ker[ky*3+kx];
 					g += img.getPixel(y+ky-1,x+kx-1).g * ker[ky*3+kx];
 					b += img.getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
@@ -133,7 +118,6 @@ void convolution(ppm& img,ppm& img_target, short int ker[])
 			img_target.setPixel(y-1,x-1,pixel(r,g,b).truncate());
 		}
 	}
-
 	return;
 }
 
@@ -153,10 +137,11 @@ void sobel(ppm &img1, ppm &img2){
 			img1.setPixel(y,x,pixel(r,g,b));
 		}
 	}
-
 }
 
 void edgeDetection(ppm &img, ppm &img_target){
+	/* Detects the edges */
+
 	// B&W Filter
 	blackWhite(img);
 
@@ -176,10 +161,12 @@ void edgeDetection(ppm &img, ppm &img_target){
 }
 
 void frame(ppm& img, pixel color, int p){
+	/* Makes a frame for the image */
+
 	// Read the image
 	for(int y = 0; y < img.height; y++){
-
 		for(int x = 0; x < img.width; x++){
+			// Check the pixel
 			if( ((y < p+1)|(y>img.height-p-1)) | ((x<p+1)|(x>img.width-p-1)) )
 				// Set the result
 				img.setPixel(y,x,color);
@@ -189,12 +176,15 @@ void frame(ppm& img, pixel color, int p){
 }
 
 void dither(ppm& img){
+	/* Represents grayscales just using b&w */
+
 	// Declare the needed variables
 	short int c;
 	float err;
 	
 	// Greyscale the image
 	blackWhite(img);
+
 	// Read the image
 	
 	for(int y = 0; y < img.height-1; y++){
@@ -209,17 +199,10 @@ void dither(ppm& img){
 			img.setPixel(y,x,pixel(c,c,c));
 
 			// Spread the error
-			c = img.getPixel(y,x+1).r + err*7/16.0;
-			img.setPixel(y  ,x+1, pixel(c,c,c).truncate());
-
-			c = img.getPixel(y+1,x-1).r + err*3/16.0;
-			img.setPixel(y+1,x-1, pixel(c,c,c).truncate());
-
-			c = img.getPixel(y+1,x).r + err*5/16.0;
-			img.setPixel(y+1,x  , pixel(c,c,c).truncate());
-			
-			c = img.getPixel(y+1,x+1).r + err*1/16.0;
-			img.setPixel(y+1,x+1,pixel(c,c,c).truncate());
+			img.getPixel(y  ,x+1).add(err*7/16.0).truncate();
+			img.getPixel(y+1,x-1).add(err*3/16.0).truncate();
+			img.getPixel(y+1,x  ).add(err*5/16.0).truncate();
+			img.getPixel(y+1,x+1).add(err*1/16.0).truncate();
 		}
 	}
 	return;
