@@ -65,7 +65,7 @@ public:
 
     void setPixel(int i, int j, pixel p){ bitmap[i][j] = p; }
   
-    pixel getPixel(int i, int j){ return bitmap[i][j]; }
+    pixel& getPixel(int i, int j){ return bitmap[i][j]; }
 
 };
 

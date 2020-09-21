@@ -57,14 +57,14 @@ void merge(ppm& img1, ppm& img2, float alpha)
 	return;
 }
 
-void brightness(ppm& img, float br, int start = 0, int end = 0)
+void brightness(ppm& img, float b, int start, int end)
 {
 	/* Changes the brightness of an image */
 	// Read the image
 	for(int y = 0; y < img.height; y++){		
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			img.getPixel(y,x).add(255 * br).truncate();
+			(img.getPixel(y,x)).add(255*b).truncate();
 		}
 	}
 	return;
@@ -82,11 +82,7 @@ void contrast(ppm& img, float contrast)
 	for(int y = 0; y < img.height; y++){
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			img.getPixel(y,x).sub(128);
-			img.getPixel(y,x).mult(f);
-			img.getPixel(y,x).add(128);
-			// I wonder if I could use this statement
-		//	img.getPixel(y,x).sub(128).mult(f).add(128);
+			img.getPixel(y,x).sub(128).mult(f).add(128).truncate();
 		}
 	}
 	return;

@@ -54,7 +54,7 @@ int main(int argc , char* argv[]){
 			edgeDetection(img, img2);
 	}
 */
-	dither(img);
+	contrast(img,150);
 
 	// Stop the clock
 	clock_gettime(CLOCK_REALTIME, &stop);
