@@ -39,7 +39,6 @@ void merge(ppm& img1, ppm& img2, float alpha)
 
 	// Declare the needed variables and the new image
 	unsigned short int r,g,b;
-	ppm newImg(img1.width, img1.height);
 
 	// Read the images
 	for(int y = 0; y < img1.height; y++){
@@ -64,7 +63,7 @@ void brightness(ppm& img, float b, int start, int end)
 	for(int y = 0; y < img.height; y++){		
 		for(int x = 0; x < img.width; x++){
 			// Process every pixel values
-			(img.getPixel(y,x)).add(255*b).truncate();
+			img.getPixel(y,x).add(255*b).truncate();
 		}
 	}
 	return;
