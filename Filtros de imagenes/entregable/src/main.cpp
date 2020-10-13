@@ -54,7 +54,13 @@ int main(int argc , char* argv[]){
 			edgeDetection(img, img2);
 	}
 */
-	contrast(img,150);
+	
+	int SIZE_MULT = 3;
+
+	ppm img2(img.width*SIZE_MULT, img.height*SIZE_MULT);
+	//edgeDetection(img,img2);
+
+	zoom(img, img2, SIZE_MULT);
 
 	// Stop the clock
 	clock_gettime(CLOCK_REALTIME, &stop);

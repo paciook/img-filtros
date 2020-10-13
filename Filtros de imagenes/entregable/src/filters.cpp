@@ -152,6 +152,8 @@ void edgeDetection(ppm &img, ppm &img_target){
 	// Sobel
 	sobel(img_target,img2);
 
+	img = img_target;
+
 	return;
 }
 
@@ -201,4 +203,24 @@ void dither(ppm& img){
 		}
 	}
 	return;
+}
+
+void zoom(ppm &img, ppm &img_zoomed, int n){
+	/* Zoom xd */
+
+	// Read the image
+	for(int y = 0; y < img.height; y++){
+		for(int x = 1; x < img.width; x++){
+		
+		// Write the aux
+			for(int i = 0; i < n; i++){
+				for(int j = 0; j < n; j++){
+					img_zoomed.setPixel((y*n) + i, (x*n) + j, img.getPixel(y,x));
+					}
+			}
+		}
+	}
+	img = img_zoomed;
+	return;
+
 }
