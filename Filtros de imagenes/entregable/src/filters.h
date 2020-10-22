@@ -22,6 +22,9 @@ void zoom(ppm &img, ppm &img_zoomed, int n);
 void edgeDetection(ppm &img, ppm &img_target);
 void dither(ppm& img);
 
+void threadedBlackWhite(ppm& img, int nthread);
+void threadedEdgeDetection(ppm& img, int nthread);
+
 
 // MULTI-THREAD FILTERS
 

@@ -60,7 +60,7 @@ int main(int argc , char* argv[]){
 	ppm img2(img.width*SIZE_MULT, img.height*SIZE_MULT);
 	//edgeDetection(img,img2);
 
-	zoom(img, img2, SIZE_MULT);
+	threadedEdgeDetection(img, 8);
 
 	// Stop the clock
 	clock_gettime(CLOCK_REALTIME, &stop);

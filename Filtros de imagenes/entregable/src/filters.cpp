@@ -33,6 +33,48 @@ void blackWhite(ppm& img)
 	return;
 }
 
+void threadedBlackWhitePt(ppm* img, int fila_start, int fila_end) {
+
+	for (size_t i = fila_start; i < fila_end; i++)
+	{
+		for (size_t j = 0; j < img->width; j++)
+		{
+			pixel p = img->getPixel(i, j);
+			pixel* pixelResultante = new pixel();
+			unsigned int gr = (p.r + p.g + p.b) / 3;
+			pixelResultante->r = gr;
+			pixelResultante->g = gr;
+			pixelResultante->b = gr;
+			img->setPixel(i, j, *pixelResultante);
+		}
+	}
+}
+
+void threadedBlackWhite(ppm& img, int nThreads) {
+	// calculo como separar las filas
+	int c_filas_por_thread = (int)(img.height / nThreads);
+	int offset = img.height - (c_filas_por_thread * nThreads);
+	// hago el pool de threads
+	vector<thread> thread_pool;
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// calculo donde empieza y termina cada thread
+		int start = i * c_filas_por_thread;
+		int end = (i + 1) * c_filas_por_thread;
+		if (i == nThreads - 1) {
+			end += offset;
+		}
+		// Creo el thread
+		thread_pool.push_back(thread(threadedBlackWhitePt, &img, start, end));
+	}
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// los espero
+        thread_pool[i].join();
+	}
+	// Si, colgué y me dió fiaca
+}
+
 void merge(ppm& img1, ppm& img2, float alpha)
 {
 	/* Merges two images */
@@ -153,6 +195,94 @@ void edgeDetection(ppm &img, ppm &img_target){
 	sobel(img_target,img2);
 
 	img = img_target;
+
+	return;
+}
+
+void threadedConvolution(ppm* img, ppm* img_target, short int ker[], int start, int end)
+{
+	/* Generic convolution algorithm */
+
+	// Declare the needed variables
+	int r,g,b;
+
+	// Read the image
+	for(int y = start; y < end; y++){
+		for(int x = 1; x < img->width - 1; x++){
+			r=g=b=0;
+
+			// Run the kernel over the image
+			for(int ky = 0; ky < 3; ky++){
+				for(int kx = 0; kx < 3; kx++){
+
+					r += img->getPixel(y+ky-1,x+kx-1).r * ker[ky*3+kx];
+					g += img->getPixel(y+ky-1,x+kx-1).g * ker[ky*3+kx];
+					b += img->getPixel(y+ky-1,x+kx-1).b * ker[ky*3+kx];
+				}
+			}
+
+			// Set the result
+			img_target->setPixel(y-1,x-1,pixel(r,g,b).truncate());
+		}
+	}
+	return;
+}
+
+void threadedEdgeDetection(ppm &img, int nThreads){
+	/* Detects the edges */
+	// B&W Filter
+	threadedBlackWhite(img, nThreads);
+
+	ppm img1(img.width - 2,img.height - 2);
+	ppm img2(img.width - 2,img.height - 2);
+
+	int c_filas_por_thread = (int)(img.height / nThreads);
+	int offset = img.height - (c_filas_por_thread * nThreads);
+
+	vector<thread> thread_pool;
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// calculo donde empieza y termina cada thread
+		int start = (i * c_filas_por_thread) + 1;
+		int end = ((i + 1) * c_filas_por_thread);
+		if (i == nThreads - 1) {
+			end += offset - 1;
+		}
+		// Horizontal convolution
+		short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
+		// Creo el thread
+		thread_pool.push_back(thread(threadedConvolution, &img, &img2, kernel, start, end));
+	}
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// los espero
+        thread_pool[i].join();
+	}
+
+	vector<thread> threads;
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// calculo donde empieza y termina cada thread
+		int start = i * c_filas_por_thread;
+		int end = (i + 1) * c_filas_por_thread;
+		if (i == nThreads - 1) {
+			end += offset;
+		}
+		// Horizontal convolution
+		short int ker[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+		// Creo el thread
+		threads.push_back(thread(threadedConvolution, &img, &img1, ker, start, end));
+	}
+	for (size_t i = 0; i < nThreads; i++)
+	{
+		// los espero
+        threads[i].join();
+	}
+
+	// Sobel
+	sobel(img1,img2);
+
+	img = img1;
 
 	return;
 }
