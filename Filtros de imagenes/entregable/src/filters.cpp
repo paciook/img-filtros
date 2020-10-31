@@ -275,8 +275,6 @@ void threadedEdgeDetectionPt(ppm img, ppm *img_target, int fila_start, int fila_
 		for (size_t j = 1; j < img.width - 1; j++)
 		{
 			pixel p_final = pixel();
-			// movy, movx
-			// ppmMutex.lock();			
 			pixel p0 = img.getPixel(i - 1, j - 1);
 			pixel p1 = img.getPixel(i - 1, j);
 			pixel p2 = img.getPixel(i - 1, j + 1);
@@ -286,10 +284,6 @@ void threadedEdgeDetectionPt(ppm img, ppm *img_target, int fila_start, int fila_
 			pixel p6 = img.getPixel(i + 1, j - 1);
 			pixel p7 = img.getPixel(i + 1, j);
 			pixel p8 = img.getPixel(i + 1, j + 1);
-			// ppmMutex.unlock();
-			//p_final.r = (p0.r + p1.r + p2.r + p3.r + p4.r + p5.r + p6.r + p7.r + p8.r) / 9;
-			//p_final.g = (p0.g + p1.g + p2.g + p3.g + p4.g + p5.g + p6.g + p7.g + p8.g) / 9;
-			//p_final.b = (p0.b + p1.b + p2.b + p3.b + p4.b + p5.b + p6.b + p7.b + p8.b) / 9;
 			unsigned int gxr = (p0.r - p2.r + 2 * p3.r - 2 * p5.r + p6.r - p8.r);
 			unsigned int gyr = (p0.r + 2 * p1.r + p2.r - p6.r - 2 * p7.r - p8.r);
 			p_final.r = sqrt(gxr * gxr + gyr * gyr);
@@ -300,9 +294,7 @@ void threadedEdgeDetectionPt(ppm img, ppm *img_target, int fila_start, int fila_
 			unsigned int gyb = (p0.b + 2 * p1.b + p2.b - p6.b - 2 * p7.b - p8.b);
 			p_final.b = sqrt(gxb * gxb + gyb * gyb);
 			p_final.truncate();
-			// ppmMutex.lock();
 			img_target->setPixel(i - 1, j - 1, p_final);
-			// ppmMutex.unlock();
 		}
 	}
 }
@@ -337,9 +329,5 @@ void threadedEdgeDetection(ppm &img, int nThreads) {
 		{
 			img.setPixel(i, j, img_target.getPixel(i, j));
 		}
-	}
-	// img = img_target;
-
-
-    
+	}    
 }
