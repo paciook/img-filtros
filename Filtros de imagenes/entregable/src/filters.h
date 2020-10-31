@@ -23,8 +23,7 @@ void edgeDetection(ppm &img, ppm &img_target);
 void dither(ppm& img);
 
 void threadedBlackWhite(ppm& img, int nthread);
-void threadedEdgeDetection(ppm& img, int nthread);
-
+void threadedEdgeDetection(ppm &img, int nThreads);
 
 // MULTI-THREAD FILTERS
 
