@@ -64,14 +64,9 @@ int main(int argc , char* argv[]){
 			// Edge Detection
 			// ./tp ed <nthreads> <img1>
 			if(singleThread)
-			edgeDetection(img);
+				edgeDetection(img);
 			else
-			threadedEdgeDetection(img, nThreads);
-		}
-		else if (filtro == "sh"){
-			// Sharpen
-			// ./tp br <nthreads> <img1>
-			
+				threadedEdgeDetection(img, nThreads);
 		}
 		else if (filtro == "fr"){
 			// Frame
@@ -102,28 +97,6 @@ int main(int argc , char* argv[]){
 		file << out;
 		file.close();
 	}
-	// Pasamos 0 en caso de no utilizar p2 o  "" en img2
-	// if(string(argv[1]) == "-help")
-	// {
-	// 	cout << "Uso: ./tp <filtro> <nthreads> <p1> <p2> <img1> <img2>" << endl;
-	// 	return 0; 
-	// }
-	// string img1((string)argv[5]);
-	
-	// ppm img(img1);	
-
-	// cout << "Aplicando filtro" << endl;
-
-	
-	
-	// blackWhite(img);
-	
-	
-	
-	// cout << "Escribiendo imagen" << endl;
-	// img.write(out);  
-
-	// cout << "Listo" << endl;
 	return 0;
 }
 
