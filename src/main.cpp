@@ -83,6 +83,21 @@ int main(int argc , char* argv[]){
 
 			frame(img, p, atoi(argv[5]));
 		}
+
+		else if (filtro == "uz"){
+			// Unzoom
+			// ./tp uz <nthreads> <img> <escale>
+			int escale = atoi(argv[4]);
+
+			ppm img2(img.width/escale, img.height/escale);
+
+			unzoom(img, img2, escale);
+
+		}
+
+		else if (filtro == "dd"){
+			dither(img);
+		}
 		
 		else {
 			ShowHelp();

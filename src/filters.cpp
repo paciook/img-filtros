@@ -218,15 +218,19 @@ void edgeDetection(ppm &img){
 	blackWhite(img);
 
 	// Horizontal convolution
-	short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
 	ppm img1(img.width - 2,img.height - 2);
-	convolution(img,img1,kernel);
+	{
+		short int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
+		convolution(img,img1,kernel);
+	}
 
 	// Vertical convolution
-	short int ker[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
 	ppm img2(img.width - 2,img.height - 2);
-	convolution(img,img2,kernel);
-
+	{
+		short int kernel[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+		convolution(img,img2,kernel);
+	}
+	
 	// Sobel
 	sobel(img1,img2);
 
@@ -340,6 +344,21 @@ void zoom(ppm &img, ppm &img_zoomed, int n){
 					img_zoomed.setPixel((y*n) + i, (x*n) + j, img.getPixel(y,x));
 					}
 			}
+		}
+	}
+	img = img_zoomed;
+	return;
+
+}
+
+void unzoom(ppm &img, ppm &img_zoomed, int n){
+	/* Zoom xd */
+
+	// Read the image
+	for(int y = 0; y < img_zoomed.height; y++){
+		for(int x = 1; x < img_zoomed.width; x++){
+			// Write the aux
+			img_zoomed.setPixel(y, x, img.getPixel(y*n,x*n));
 		}
 	}
 	img = img_zoomed;
